@@ -4,7 +4,7 @@ import argparse
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-
+from prompts import SYSTEM_PROMPT
 
 
 # *****   Configuration   *****
@@ -29,11 +29,12 @@ user_prompt = args.user_prompt
 messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
 
-
+print(f"System prompt being used: {SYSTEM_PROMPT}")
 # *****  Core Logic  *****
 response = client.models.generate_content(
     model='gemini-2.5-flash', 
-    contents=messages
+    contents=messages,
+    config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT)
     )
 
 # *****  Validation and Output   *****
