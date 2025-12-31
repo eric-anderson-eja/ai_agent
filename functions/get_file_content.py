@@ -1,5 +1,23 @@
 from config import MAX_FILE_CHARS
 import os
+from google import genai
+from google.genai import types
+
+schema_get_file_content = {
+    "name": "get_file_content",
+    "description": "Read the contents of a specific file.",
+    "parameters": {
+        "type": "OBJECT",
+        "properties": {
+            "file_path": {
+                "type": "STRING",
+                "description": "The path to the file to read."
+            }
+        },
+        "required": ["file_path"]
+    }
+}
+
 
 def get_file_content(working_directory, file_path):
     try:

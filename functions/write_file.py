@@ -1,4 +1,26 @@
 import os
+from google import genai
+from google.genai import types
+
+schema_write_file = {
+    "name": "write_file",
+    "description": "Write or overwrite text content to a file.",
+    "parameters": {
+        "type": "OBJECT",
+        "properties": {
+            "file_path": {
+                "type": "STRING",
+                "description": "The path to the file to write."
+            },
+            "content": {
+                "type": "STRING",
+                "description": "The text content to write to the file."
+            }
+        },
+        "required": ["file_path", "content"]
+    }
+}
+
 
 def write_file(working_directory, file_path, content):
     try:

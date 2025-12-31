@@ -1,5 +1,30 @@
 import os
 import subprocess
+from google import genai
+from google.genai import types
+
+schema_run_python_file = {
+    "name": "run_python_file",
+    "description": "Execute a Python file with optional command-line arguments.",
+    "parameters": {
+        "type": "OBJECT",
+        "properties": {
+            "file_path": {
+                "type": "STRING",
+                "description": "The path to the Python file to run."
+            },
+            "args": {
+                "type": "ARRAY",
+                "description": "Optional list of command-line arguments.",
+                "items": {
+                    "type": "STRING"
+                }
+            }
+        },
+        "required": ["file_path"]
+    }
+}
+
 
 def run_python_file(working_directory, file_path, args=None):
     try:

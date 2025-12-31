@@ -44,7 +44,6 @@ if response.usage_metadata == 'None':
     raise RuntimeError("POSSIBLE FAILED REQUEST, no token metadata")
 if args.verbose:
     print(f"User prompt: {user_prompt}")
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
     print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
 if not response.function_calls == None:
