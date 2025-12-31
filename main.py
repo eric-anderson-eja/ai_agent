@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from prompts import SYSTEM_PROMPT
-from functions.call_function import available_functions
+from functions.call_function import available_functions, call_function
 
 
 # *****   Configuration   *****
@@ -30,7 +30,6 @@ user_prompt = args.user_prompt
 messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
 
-#print(f"System prompt being used: {SYSTEM_PROMPT}")
 # *****  Core Logic  *****
 response = client.models.generate_content(
     model='gemini-2.5-flash', 
@@ -46,8 +45,30 @@ if args.verbose:
     print(f"User prompt: {user_prompt}")
     print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
-if not response.function_calls == None:
+if not response.function_calls:
     for function_call in response.function_calls:
         print(f"Calling function: {function_call.name}({function_call.args})")
 else:
-    print(f"Response:\n{response.text}")
+    function_results = []
+    for function_call in response.function_calls:
+        function_call_result = call_function(function_call, args.verbose)
+
+        # 1) parts must exist
+        if not function_call_result.parts:
+            raise RuntimeError("Empty parts list from function call")
+
+        part = function_call_result.parts[0]
+
+        # 2) function_response must exist
+        if not part.function_response:
+            raise RuntimeError("Missing function_response on part")
+
+        # 3) .response must exist
+        if not part.function_response.response:
+            raise RuntimeError("Missing response in function_response")
+
+        function_results.append(part)
+
+        if args.verbose:
+            print(f"-> {part.function_response.response}")        
+
